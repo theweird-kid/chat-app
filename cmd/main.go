@@ -1,9 +1,19 @@
 package main
 
-import "github.com/theweird-kid/chat-app/cmd/api"
+import (
+	"log"
+
+	"github.com/theweird-kid/chat-app/cmd/api"
+	"github.com/theweird-kid/chat-app/config"
+	"github.com/theweird-kid/chat-app/db"
+)
 
 func main() {
-	app := api.NewAPIServer(":8080")
+	db, q, err := db.NewPostgresStorage(config.Envs.DATABASE_URL)
+	if err != nil {
+		log.Fatal("Couldn't connect to the database")
+	}
+	app := api.NewAPIServer(config.Envs.PORT, db, q)
 	app.RunServer()
 
 }
